@@ -1,0 +1,95 @@
+<!-- ============================================== -->
+<!-- BLOGGER COMMENT SYSTEM - TEMA ENTEGRASYON     -->
+<!-- ============================================== -->
+
+<!-- ============================================== -->
+<!-- ADIM 1: Bu kodu </head> etiketinden ÖNCE ekle -->
+<!-- ============================================== -->
+
+<!-- Firebase SDK -->
+<script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'/>
+<script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'/>
+<script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js'/>
+
+
+<!-- ============================================== -->
+<!-- ADIM 2: Bu kodu post içeriği sonrasına ekle   -->
+<!-- (genellikle <data:post.body/> sonrası)        -->
+<!-- ============================================== -->
+
+<b:if cond='data:view.isPost'>
+  <div id='blogger-comments-container' style='margin-top: 30px;'/>
+</b:if>
+
+
+<!-- ============================================== -->
+<!-- ADIM 3: Bu kodu </body> etiketinden ÖNCE ekle -->
+<!-- ============================================== -->
+
+<b:if cond='data:view.isPost'>
+<!-- Blogger Comment System Bundle -->
+<!-- URL'yi kendi GitHub reponla değiştir -->
+<script src='https://cdn.jsdelivr.net/gh/KULLANICI/REPO@main/blogger-comments.min.js'></script>
+
+<!-- Comment System Initialization -->
+<script>
+//<![CDATA[
+(function() {
+  'use strict';
+  
+  // ========================================
+  // FIREBASE CONFIG - KENDİ BİLGİLERİNLE DEĞİŞTİR
+  // ========================================
+  var firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.firebasestorage.app",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  // ========================================
+  
+  function initBloggerComments() {
+    // BloggerComments yüklendi mi kontrol et
+    if (typeof window.BloggerComments === 'undefined') {
+      console.error('[BloggerComments] Library not loaded!');
+      return;
+    }
+
+    // Container var mı kontrol et
+    var container = document.getElementById('blogger-comments-container');
+    if (!container) {
+      console.error('[BloggerComments] Container not found!');
+      return;
+    }
+
+    try {
+      // Widget oluştur ve başlat
+      var widget = new window.BloggerComments(container, {
+        firebaseConfig: firebaseConfig,
+        postId: window.location.pathname,
+        postTitle: document.title,
+        adminEmails: ['admin@example.com'], // Admin email adreslerini değiştir
+        maxCommentLength: 2000,
+        maxReplyDepth: 3
+      });
+      
+      widget.init();
+      console.log('[BloggerComments] Initialized successfully!');
+      
+    } catch (error) {
+      console.error('[BloggerComments] Init error:', error);
+    }
+  }
+
+  // Sayfa yüklenince başlat
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBloggerComments);
+  } else {
+    setTimeout(initBloggerComments, 100);
+  }
+})();
+//]]>
+</script>
+</b:if>
