@@ -1,15 +1,30 @@
 <!-- ============================================== -->
 <!-- BLOGGER COMMENT SYSTEM - TEMA ENTEGRASYON     -->
 <!-- ============================================== -->
+<!-- 
+  v1.5.0 - Emoji Reaction Sistemi
+  
+  Özellikler:
+  - 🎭 6 Farklı Emoji Reaction (👍 🔥 🤯 😕 😬 👑)
+  - 💬 Nested Comments (3 seviye)
+  - 👍 Like/Dislike sistemi
+  - 👤 Kullanıcı kayıt/giriş + anonim yorum
+  - 🎨 Dark tema
+  - 📱 Responsive (mobil/tablet/desktop)
+  - ⚡ Real-time güncellemeler
+  - 🚀 Cache optimizasyonu (~10x hızlı)
+  - 👑 Admin sistemi
+  - 🛡️ Rate limiting & spam koruması
+-->
 
 <!-- ============================================== -->
 <!-- ADIM 1: Bu kodu </head> etiketinden ÖNCE ekle -->
 <!-- ============================================== -->
 
-<!-- Firebase SDK -->
+<!-- Firebase SDK (Realtime Database) -->
 <script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js'/>
-<script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'/>
 <script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js'/>
+<script src='https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js'/>
 
 
 <!-- ============================================== -->
@@ -27,8 +42,8 @@
 <!-- ============================================== -->
 
 <b:if cond='data:view.isPost'>
-<!-- Blogger Comment System Bundle -->
-<!-- URL'yi kendi GitHub reponla değiştir -->
+<!-- Blogger Comment System Bundle (v1.5.0) -->
+<!-- URL'yi kendi GitHub reponla veya CDN'inle değiştir -->
 <script src='https://cdn.jsdelivr.net/gh/KULLANICI/REPO@main/blogger-comments.min.js'></script>
 
 <!-- Comment System Initialization -->
@@ -40,9 +55,12 @@
   // ========================================
   // FIREBASE CONFIG - KENDİ BİLGİLERİNLE DEĞİŞTİR
   // ========================================
+  // Firebase Console'dan alın: https://console.firebase.google.com
+  // Project Settings > General > Your apps > Web app
   var firebaseConfig = {
     apiKey: "YOUR_API_KEY",
     authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.REGION.firebasedatabase.app",
     projectId: "YOUR_PROJECT",
     storageBucket: "YOUR_PROJECT.firebasestorage.app",
     messagingSenderId: "YOUR_SENDER_ID",
@@ -70,16 +88,31 @@
         firebaseConfig: firebaseConfig,
         postId: window.location.pathname,
         postTitle: document.title,
-        adminEmails: ['admin@example.com'], // Admin email adreslerini değiştir
-        maxCommentLength: 2000,
-        maxReplyDepth: 3
+        
+        // Admin email listesi (bu email'ler admin badge alır ve tüm yorumları silebilir)
+        adminEmails: ['admin@example.com', 'moderator@example.com'],
+        
+        // Yorum ayarları
+        maxCommentLength: 2000,      // Maksimum karakter sayısı
+        maxReplyDepth: 3,             // Maksimum yanıt derinliği
+        maxAvatarSizeMB: 2            // Maksimum avatar boyutu (MB)
       });
       
       widget.init();
-      console.log('[BloggerComments] Initialized successfully!');
+      console.log('[BloggerComments] v1.5.0 initialized successfully!');
       
     } catch (error) {
       console.error('[BloggerComments] Init error:', error);
+      
+      // Hata durumunda kullanıcıya bilgi ver
+      if (container) {
+        container.innerHTML = 
+          '<div style="padding: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; color: #fff;">' +
+          '<strong>⚠️ Yorum sistemi yüklenemedi</strong><br>' +
+          'Hata: ' + error.message + '<br>' +
+          'Lütfen Firebase yapılandırmanızı kontrol edin.' +
+          '</div>';
+      }
     }
   }
 
@@ -93,3 +126,42 @@
 //]]>
 </script>
 </b:if>
+
+
+<!-- ============================================== -->
+<!-- ÖNEMLİ NOTLAR                                  -->
+<!-- ============================================== -->
+<!--
+  1. FIREBASE KURULUMU:
+     - Firebase Console'da Realtime Database aktifleştirin
+     - Authentication > Email/Password aktifleştirin
+     - Firebase Rules'u güncelleyin (firebase-rules-secure.json)
+  
+  2. BLOGGER AYARLARI:
+     - Blogger'ın varsayılan yorum sistemini devre dışı bırakın
+     - Tema > Ayarlar > Yorumlar > Gizle
+  
+  3. CDN KURULUMU:
+     - blogger-comments.min.js dosyasını bir CDN'e yükleyin
+     - Yukarıdaki script src URL'ini güncelleyin
+     - Önerilen: jsDelivr, GitHub Pages, veya kendi CDN'iniz
+  
+  4. GÜVENLİK:
+     - Firebase API Key'i public olabilir (domain kısıtlaması ile güvenli)
+     - Firebase Console > Project Settings > Authorized domains
+     - Blogger domain'inizi ekleyin
+  
+  5. EMOJI REACTIONS:
+     - 6 farklı emoji: 👍 🔥 🤯 😕 😬 👑
+     - Kullanıcı aynı anda sadece 1 reaction verebilir
+     - Anonim kullanıcılar da reaction verebilir
+  
+  6. RATE LIMITING:
+     - Anonim kullanıcılar: 5 saniye bekleme + günlük 50 yorum
+     - Kayıtlı kullanıcılar: Sınırsız
+  
+  7. DESTEK:
+     - Dokümantasyon: github.com/KULLANICI/REPO
+     - Issues: github.com/KULLANICI/REPO/issues
+-->
+
